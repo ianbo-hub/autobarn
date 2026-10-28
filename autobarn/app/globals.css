@@ -41,19 +41,9 @@
 }
 
 /* ─── DARK MODE ──────────────────────────────────────────────── */
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --cream:     #111111;
-    --off-white: #1A1A1A;
-    --ink:       #FAF7F2;
-    --grey-100:  #1E1E1E;
-    --grey-200:  #2A2A2A;
-    --grey-400:  #666666;
-    --grey-600:  #AAAAAA;
-    --rule:      #333333;
-    color-scheme: dark;
-  }
-}
+/* Note: prefers-color-scheme auto-switching intentionally removed.
+   AutoBarn uses a warm cream brand identity at all times.
+   Dark mode is opt-in only via [data-theme="dark"] on <html>. */
 :root[data-theme="dark"] {
   --cream:     #111111;
   --off-white: #1A1A1A;
@@ -329,18 +319,17 @@ a {
   -webkit-backdrop-filter: blur(32px) saturate(200%);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) .glass-nav {
-    background: rgba(17, 17, 17, 0.5);
-    border-bottom-color: rgba(51, 51, 51, 0.4);
-  }
-  :root:not([data-theme="light"]) .glass-nav--scrolled {
-    background: rgba(17, 17, 17, 0.8);
-    border-bottom-color: rgba(51, 51, 51, 0.6);
-  }
-  :root:not([data-theme="light"]) .glass-nav--mobile {
-    background: rgba(17, 17, 17, 0.94);
-  }
+/* Glass nav dark variants — manual toggle only */
+:root[data-theme="dark"] .glass-nav {
+  background: rgba(17, 17, 17, 0.5);
+  border-bottom-color: rgba(51, 51, 51, 0.4);
+}
+:root[data-theme="dark"] .glass-nav--scrolled {
+  background: rgba(17, 17, 17, 0.8);
+  border-bottom-color: rgba(51, 51, 51, 0.6);
+}
+:root[data-theme="dark"] .glass-nav--mobile {
+  background: rgba(17, 17, 17, 0.94);
 }
 
 /* ─── REDUCED MOTION ─────────────────────────────────────────── */
