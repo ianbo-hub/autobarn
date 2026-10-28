@@ -1,164 +1,135 @@
 import type { Metadata } from 'next'
+import Image from 'next/image'
 import Link from 'next/link'
+import { Suspense } from 'react'
+import { sanityFetch } from '@/lib/sanity/client'
+import { vehicleListQuery } from '@/lib/sanity/queries'
+import { VehicleCardSkeleton } from '@/components/ui/Skeleton'
+import { NoVehiclesState } from '@/components/ui/EmptyState'
+import { VehicleCatalogue } from '@/components/vehicles/VehicleCatalogue'
+import { formatPrice } from '@/lib/utils'
+import type { Vehicle } from '@/types'
 
 export const metadata: Metadata = {
-  title: 'About Us',
-  description: 'Learn about AutoBarn — Nairobi\'s trusted vehicle dealership and detailing specialist since 2010.',
+  title: 'AutoBarn — Premium Vehicles, Nairobi',
+  description: 'Browse quality used and new vehicles at AutoBarn Nairobi. Affordable prices, professional inspection on every car.',
 }
 
-const VALUES = [
-  {
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-8 h-8 text-red">
-        <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
-      </svg>
-    ),
-    title: 'Transparency',
-    body: 'Every vehicle comes with a full inspection report and service history. No hidden surprises.',
-  },
-  {
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-8 h-8 text-red">
-        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-      </svg>
-    ),
-    title: 'Integrity',
-    body: 'We tell you what we know — and what we don\'t. Honest advice over a quick sale, every time.',
-  },
-  {
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-8 h-8 text-red">
-        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-      </svg>
-    ),
-    title: 'Quality',
-    body: 'We stock only vehicles that meet our 120-point inspection standard. Average age under 5 years.',
-  },
-  {
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-8 h-8 text-red">
-        <path d="M17 11H3a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h1v2l3-2h10a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2z"/>
-        <path d="M21 7H7a2 2 0 0 0-2 2v2h12a4 4 0 0 1 4 4V9a2 2 0 0 0-2-2z"/>
-      </svg>
-    ),
-    title: 'Partnership',
-    body: 'A car purchase is a big decision. We stay with you from first enquiry through every service interval.',
-  },
-]
-
-const TIMELINE = [
-  { year: '2010', event: 'AutoBarn founded in Westlands with a 12-car lot and 3 staff.' },
-  { year: '2014', event: 'Launched professional detailing bay. First KES 1M revenue month.' },
-  { year: '2017', event: 'Expanded to current 80-car showroom. Added import sourcing from Japan.' },
-  { year: '2020', event: 'Launched online catalogue. Delivered 50% of sales contact-free during COVID.' },
-  { year: '2023', event: 'Added EV inventory and Kenya\'s first on-site EV charging bay.' },
-  { year: '2024', event: 'Over 4,000 vehicles sold since founding. Recognised as a top-rated dealership on Google Reviews.' },
-]
-
-const OPEN_ROLES = [
-  { title: 'Vehicle Sales Executive',  type: 'Full-time', location: 'Westlands, Nairobi' },
-  { title: 'Detailing Technician',     type: 'Full-time', location: 'Westlands, Nairobi' },
-  { title: 'Digital Marketing Intern', type: 'Internship', location: 'Remote / Hybrid' },
-]
-
-export default function AboutPage() {
+// ─── HERO ─────────────────────────────────────────────────────
+function Hero() {
   return (
-    <>
-      {/* Hero */}
-      <section className="bg-ink text-cream section page-wrap">
-        <p className="eyebrow text-grey-600">Our Story</p>
-        <h1 className="text-cream max-w-3xl">Built on trust, driven by passion.</h1>
-        <p className="text-grey-400 mt-6 max-w-xl text-lg leading-relaxed">
-          Since 2010, AutoBarn has been Nairobi's benchmark for quality vehicles and professional car care.
+    <section
+      aria-label="Hero"
+      className="relative w-full h-[92vh] min-h-[560px] overflow-hidden"
+    >
+      {/* Background — video preferred; falls back to image */}
+      <video
+        autoPlay
+        muted
+        loop
+        playsInline
+        aria-hidden="true"
+        className="absolute inset-0 w-full h-full object-cover"
+        poster="/images/hero-poster.jpg"
+      >
+        <source src="/videos/hero.mp4" type="video/mp4" />
+      </video>
+
+      {/* Gradient overlay */}
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 bg-gradient-to-b from-ink/70 via-ink/30 to-ink/80"
+      />
+
+      {/* Parallax content */}
+      <div className="relative h-full flex flex-col justify-end page-wrap pb-16 md:pb-24">
+        <p className="eyebrow text-cream/70 mb-4">
+          Premium Dealership — Nairobi, Kenya
         </p>
-      </section>
-
-      {/* Mission */}
-      <section className="section page-wrap border-b border-rule">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
-          <div>
-            <p className="eyebrow">Mission</p>
-            <h2 className="mb-6">Every Kenyan deserves a car they can rely on.</h2>
-            <p className="mb-4">
-              We exist to make vehicle ownership simpler, safer and more transparent. Every car
-              we sell has passed a rigorous 120-point check, and we stand behind every vehicle
-              with a 7-day return guarantee.
-            </p>
-            <p>
-              Our detailing team keeps those cars immaculate long after the sale — because a well-maintained
-              car is a safer, more valuable car.
-            </p>
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            {VALUES.map(({ icon, title, body }) => (
-              <div key={title} className="border border-rule p-5">
-                <div className="mb-3">{icon}</div>
-                <h3 className="font-display text-lg font-bold uppercase mb-2">{title}</h3>
-                <p className="text-sm text-grey-600">{body}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* History timeline */}
-      <section className="section page-wrap border-b border-rule">
-        <p className="eyebrow">History</p>
-        <h2 className="mb-12">How we got here</h2>
-
-        <div className="relative border-l border-rule ml-4">
-          {TIMELINE.map(({ year, event }) => (
-            <div key={year} className="pl-8 pb-10 relative">
-              <div className="absolute -left-[5px] top-1 w-2.5 h-2.5 bg-red rounded-none border-2 border-red" />
-              <p className="mono-label text-red mb-1">{year}</p>
-              <p className="text-grey-600">{event}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Careers */}
-      <section id="careers" className="section page-wrap border-b border-rule">
-        <p className="eyebrow">Careers</p>
-        <h2 className="mb-4">Open positions</h2>
-        <p className="text-grey-600 mb-10 max-w-lg">
-          We're growing. If you're passionate about cars and customer service, we want to hear from you.
-        </p>
-
-        <div className="flex flex-col gap-4">
-          {OPEN_ROLES.map(({ title, type, location }) => (
-            <div key={title} className="border border-rule p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <div>
-                <h3 className="font-display text-xl font-bold uppercase">{title}</h3>
-                <div className="flex gap-3 mt-2">
-                  <span className="badge badge-cream">{type}</span>
-                  <span className="mono-label text-grey-400">{location}</span>
-                </div>
-              </div>
-              <Link href="/contact?subject=careers" className="btn btn-primary shrink-0">
-                Apply now
-              </Link>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Work with us CTA */}
-      <section className="section page-wrap">
-        <div className="bg-ink text-cream p-12 md:p-20 flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
-          <div>
-            <p className="eyebrow text-grey-600 mb-4">Partner</p>
-            <h2 className="text-cream mb-4">Want to work with us?</h2>
-            <p className="text-grey-400 max-w-md">
-              We collaborate with logistics partners, finance providers, insurance firms and content creators.
-              Let's build something together.
-            </p>
-          </div>
-          <Link href="/contact?subject=partnership" className="btn btn-red shrink-0">
-            Get in touch
+        <h1 className="text-cream leading-none mb-8 max-w-3xl">
+          The car you deserve is here.
+        </h1>
+        <div className="flex flex-col sm:flex-row gap-4">
+          <Link href="#catalogue" className="btn btn-red text-base py-4 px-8">
+            Browse vehicles
+          </Link>
+          <Link href="/contact" className="btn btn-secondary border-cream text-cream hover:bg-cream hover:text-ink py-4 px-8">
+            Request a quote
           </Link>
         </div>
-      </section>
+      </div>
+    </section>
+  )
+}
+
+// ─── CATALOGUE SECTION ────────────────────────────────────────
+async function VehiclesSection() {
+  let vehicles: Vehicle[] = []
+  try {
+    vehicles = await sanityFetch<Vehicle[]>({
+      query:     vehicleListQuery,
+      tags:      ['vehicles'],
+      revalidate: 60,
+    })
+  } catch {
+    // Fail silently — show empty state
+  }
+
+  return (
+    <section id="catalogue" className="section page-wrap">
+      <p className="eyebrow">Our Stock</p>
+      <h2 className="mb-12">Browse vehicles</h2>
+
+      <Suspense fallback={
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {Array.from({ length: 6 }).map((_, i) => <VehicleCardSkeleton key={i} />)}
+        </div>
+      }>
+        <VehicleCatalogue initialVehicles={vehicles} />
+      </Suspense>
+    </section>
+  )
+}
+
+// ─── BANNER BAR ───────────────────────────────────────────────
+function TrustBanner() {
+  const items = [
+    { icon: '✓', text: 'Fully inspected'                                 },
+    { icon: '✓', text: 'Logbook included'                                },
+    { icon: '✓', text: '7-day return guarantee', href: '/terms#returns'  },
+    { icon: '✓', text: 'Finance options available'                       },
+  ]
+
+  return (
+    <div className="bg-ink text-cream border-y border-[#222]">
+      <div className="page-wrap py-5">
+        <ul
+          role="list"
+          className="flex flex-wrap justify-center md:justify-between gap-x-10 gap-y-3"
+        >
+          {items.map(({ icon, text, href }) => (
+            <li key={text} className="flex items-center gap-2 mono-label text-grey-400">
+              <span className="text-green text-sm">{icon}</span>
+              {href ? (
+                <a href={href} className="underline-offset-2 hover:underline hover:text-cream transition-colors">
+                  {text}
+                </a>
+              ) : text}
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  )
+}
+
+// ─── PAGE ─────────────────────────────────────────────────────
+export default function HomePage() {
+  return (
+    <>
+      <Hero />
+      <TrustBanner />
+      <VehiclesSection />
     </>
   )
 }

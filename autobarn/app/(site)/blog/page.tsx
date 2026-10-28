@@ -44,7 +44,11 @@ async function BlogGrid() {
                 priority
               />
             ) : (
-              <div className="w-full h-full flex items-center justify-center text-6xl text-grey-400">📰</div>
+              <div className="w-full h-full flex items-center justify-center">
+                <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" className="w-12 h-12 text-grey-400 opacity-40">
+                  <rect x="6" y="10" width="36" height="28" rx="1"/><path d="M6 18h36M14 10v28M20 22h16M20 28h10"/>
+                </svg>
+              </div>
             )}
           </div>
           <div className="p-8 md:p-12 flex flex-col justify-center">
@@ -81,7 +85,11 @@ async function BlogGrid() {
                     className="object-cover group-hover:scale-105 transition-transform duration-500"
                   />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center text-4xl text-grey-400">📰</div>
+                  <div className="w-full h-full flex items-center justify-center">
+                    <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" className="w-10 h-10 text-grey-400 opacity-40">
+                      <rect x="6" y="10" width="36" height="28" rx="1"/><path d="M6 18h36M14 10v28M20 22h16M20 28h10"/>
+                    </svg>
+                  </div>
                 )}
               </div>
               <div className="p-5 flex flex-col flex-1">

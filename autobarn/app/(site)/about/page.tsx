@@ -7,10 +7,43 @@ export const metadata: Metadata = {
 }
 
 const VALUES = [
-  { icon: '🔍', title: 'Transparency',  body: 'Every vehicle comes with a full inspection report and service history. No hidden surprises.' },
-  { icon: '🛡️', title: 'Integrity',     body: 'We tell you what we know — and what we don\'t. Honest advice over a quick sale, every time.' },
-  { icon: '✨', title: 'Quality',        body: 'We stock only vehicles that meet our 120-point inspection standard. Average age under 5 years.' },
-  { icon: '🤝', title: 'Partnership',   body: 'A car purchase is a big decision. We stay with you from first enquiry through every service interval.' },
+  {
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-8 h-8 text-red">
+        <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+      </svg>
+    ),
+    title: 'Transparency',
+    body: 'Every vehicle comes with a full inspection report and service history. No hidden surprises.',
+  },
+  {
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-8 h-8 text-red">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+      </svg>
+    ),
+    title: 'Integrity',
+    body: 'We tell you what we know — and what we don\'t. Honest advice over a quick sale, every time.',
+  },
+  {
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-8 h-8 text-red">
+        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+      </svg>
+    ),
+    title: 'Quality',
+    body: 'We stock only vehicles that meet our 120-point inspection standard. Average age under 5 years.',
+  },
+  {
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-8 h-8 text-red">
+        <path d="M17 11H3a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h1v2l3-2h10a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2z"/>
+        <path d="M21 7H7a2 2 0 0 0-2 2v2h12a4 4 0 0 1 4 4V9a2 2 0 0 0-2-2z"/>
+      </svg>
+    ),
+    title: 'Partnership',
+    body: 'A car purchase is a big decision. We stay with you from first enquiry through every service interval.',
+  },
 ]
 
 const TIMELINE = [
@@ -59,7 +92,7 @@ export default function AboutPage() {
           <div className="grid grid-cols-2 gap-4">
             {VALUES.map(({ icon, title, body }) => (
               <div key={title} className="border border-rule p-5">
-                <div className="text-3xl mb-3">{icon}</div>
+                <div className="mb-3">{icon}</div>
                 <h3 className="font-display text-lg font-bold uppercase mb-2">{title}</h3>
                 <p className="text-sm text-grey-600">{body}</p>
               </div>

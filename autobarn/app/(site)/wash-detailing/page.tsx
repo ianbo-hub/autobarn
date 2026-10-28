@@ -84,8 +84,14 @@ export default async function WashDetailingPage() {
               From a quick refresh to a show-quality detail, we have a service for every need and budget.
             </p>
           </div>
-          <div className="aspect-video bg-grey-100 border border-rule flex items-center justify-center text-grey-400 text-6xl">
-            🚿
+          <div className="aspect-video bg-grey-100 border border-rule flex flex-col items-center justify-center gap-3 text-grey-400">
+            <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-16 h-16 opacity-30">
+              <path d="M8 40h48M12 40l4-12h32l4 12"/>
+              <path d="M16 28c0-8.84 7.16-16 16-16s16 7.16 16 16"/>
+              <circle cx="20" cy="48" r="4"/><circle cx="44" cy="48" r="4"/>
+              <path d="M24 48h16"/>
+            </svg>
+            <span className="mono-label text-grey-400 opacity-50">Detailing bay photo</span>
           </div>
         </div>
       </section>
