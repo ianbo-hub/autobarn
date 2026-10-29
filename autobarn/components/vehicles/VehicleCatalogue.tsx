@@ -13,6 +13,10 @@ const FUELS = ['Petrol', 'Diesel', 'Hybrid', 'Electric']
 const TRANSMISSIONS = ['Automatic', 'Manual']
 const COLOURS = ['Black', 'White', 'Silver', 'Red', 'Blue', 'Grey', 'Brown', 'Green']
 
+const PRICE_MIN = 500_000
+const PRICE_MAX = 10_000_000
+const PRICE_STEP = 100_000
+
 const EMPTY_FILTERS: VehicleFilters = {
   minPrice:     undefined,
   maxPrice:     undefined,
@@ -23,6 +27,86 @@ const EMPTY_FILTERS: VehicleFilters = {
   colour:       undefined,
 }
 
+// ─── DUAL RANGE PRICE SLIDER ─────────────────────────────────
+function PriceRangeSlider({
+  minPrice,
+  maxPrice,
+  onChange,
+}: {
+  minPrice: number | undefined
+  maxPrice: number | undefined
+  onChange: (min: number | undefined, max: number | undefined) => void
+}) {
+  const lo = minPrice ?? PRICE_MIN
+  const hi = maxPrice ?? PRICE_MAX
+
+  const loPercent = ((lo - PRICE_MIN) / (PRICE_MAX - PRICE_MIN)) * 100
+  const hiPercent = ((hi - PRICE_MIN) / (PRICE_MAX - PRICE_MIN)) * 100
+
+  const fmtShort = (n: number) => {
+    if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(n % 1_000_000 === 0 ? 0 : 1)}M`
+    if (n >= 1_000) return `${(n / 1_000).toFixed(0)}K`
+    return String(n)
+  }
+
+  return (
+    <div>
+      {/* Thumb styles — scoped via class names */}
+      <style>{`
+        .price-slider-wrap{position:relative;height:24px;display:flex;align-items:center;}
+        .price-slider-track{position:absolute;left:0;right:0;height:3px;background:#d4d0c8;}
+        .price-slider-fill{position:absolute;height:3px;background:var(--ink);}
+        .price-range-input{position:absolute;left:0;width:100%;height:3px;-webkit-appearance:none;appearance:none;background:transparent;pointer-events:none;outline:none;}
+        .price-range-input::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:16px;height:16px;background:var(--ink);border:2px solid var(--cream);box-shadow:0 0 0 1.5px var(--ink);border-radius:0;cursor:grab;pointer-events:all;}
+        .price-range-input:active::-webkit-slider-thumb{cursor:grabbing;}
+        .price-range-input::-moz-range-thumb{width:16px;height:16px;background:var(--ink);border:2px solid var(--cream);box-shadow:0 0 0 1.5px var(--ink);border-radius:0;cursor:grab;pointer-events:all;border:none;}
+      `}</style>
+
+      <div className="flex justify-between text-xs text-grey-600 mb-3">
+        <span>KES {fmtShort(lo)}</span>
+        <span>{hi >= PRICE_MAX ? 'Any max' : `KES ${fmtShort(hi)}`}</span>
+      </div>
+
+      <div className="price-slider-wrap">
+        <div className="price-slider-track" />
+        <div
+          className="price-slider-fill"
+          style={{ left: `${loPercent}%`, width: `${hiPercent - loPercent}%` }}
+        />
+        {/* Min thumb */}
+        <input
+          type="range"
+          min={PRICE_MIN}
+          max={PRICE_MAX}
+          step={PRICE_STEP}
+          value={lo}
+          onChange={e => {
+            const val = +e.target.value
+            if (val < hi) onChange(val === PRICE_MIN ? undefined : val, maxPrice)
+          }}
+          className="price-range-input"
+          aria-label="Minimum price"
+        />
+        {/* Max thumb */}
+        <input
+          type="range"
+          min={PRICE_MIN}
+          max={PRICE_MAX}
+          step={PRICE_STEP}
+          value={hi}
+          onChange={e => {
+            const val = +e.target.value
+            if (val > lo) onChange(minPrice, val === PRICE_MAX ? undefined : val)
+          }}
+          className="price-range-input"
+          aria-label="Maximum price"
+        />
+      </div>
+    </div>
+  )
+}
+
+// ─── FILTER PANEL ─────────────────────────────────────────────
 function FilterPanel({
   filters,
   onChange,
@@ -32,29 +116,14 @@ function FilterPanel({
 }) {
   return (
     <aside aria-label="Vehicle filters" className="border border-rule p-6 flex flex-col gap-6 h-fit sticky top-24">
+      {/* Price slider */}
       <div>
         <p className="label mb-3">Price range (KES)</p>
-        <div className="flex items-center gap-2 text-sm text-grey-600">
-          <input
-            type="number"
-            placeholder="Min"
-            min={0}
-            step={50000}
-            value={filters.minPrice ?? ''}
-            onChange={e => onChange({ minPrice: e.target.value ? +e.target.value : undefined })}
-            className="input w-full text-sm py-2 px-3"
-          />
-          <span>–</span>
-          <input
-            type="number"
-            placeholder="Max"
-            min={0}
-            step={50000}
-            value={filters.maxPrice ?? ''}
-            onChange={e => onChange({ maxPrice: e.target.value ? +e.target.value : undefined })}
-            className="input w-full text-sm py-2 px-3"
-          />
-        </div>
+        <PriceRangeSlider
+          minPrice={filters.minPrice}
+          maxPrice={filters.maxPrice}
+          onChange={(min, max) => onChange({ minPrice: min, maxPrice: max })}
+        />
       </div>
 
       {/* Year */}
@@ -174,7 +243,14 @@ function VehicleCard({ vehicle }: { vehicle: Vehicle }) {
               className="object-cover group-hover:scale-105 transition-transform duration-500"
             />
           ) : (
-            <div className="w-full h-full flex items-center justify-center text-grey-400 text-4xl">🚗</div>
+            <div className="w-full h-full flex items-center justify-center bg-grey-100">
+              <svg viewBox="0 0 64 32" fill="none" className="w-16 h-8 text-grey-400" stroke="currentColor" strokeWidth="1.5">
+                <rect x="6" y="8" width="52" height="18" rx="3"/>
+                <circle cx="16" cy="26" r="5"/>
+                <circle cx="48" cy="26" r="5"/>
+                <path d="M6 14h6l5-7h18l7 7h8"/>
+              </svg>
+            </div>
           )}
 
           {vehicle.status === 'available' && vehicle.badge === 'new_arrival' && (
